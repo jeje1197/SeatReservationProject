@@ -1,6 +1,8 @@
 package com.cognixia.jump.seatreservationproject;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class Auditorium implements Reservable{
 	String name;
@@ -56,19 +58,52 @@ public class Auditorium implements Reservable{
 	
 	
 	
-	public int promptRow(Scanner sc) throws Exception {
-		System.out.print("Enter a row: ");
-		return sc.nextInt() - 1;
+	public int promptRow(Scanner sc) {
+		int row = 1;
+		while (true) {
+			System.out.print("Enter row (number): ");
+			try {
+				row = sc.nextInt();
+				break;
+			} catch (InputMismatchException e){
+				System.out.println("Invalid input. Expected an integer for the row number.");
+			}
+		}
+		return row - 1;
 	}
 	
-	public int promptColumn(Scanner sc) throws Exception {
-		System.out.print("Enter a column: ");
-		return sc.nextInt() - 1;
+	public int promptColumn(Scanner sc) {
+		int col = 1;
+		while (true) {
+			System.out.print("Enter column (number): ");
+			try {
+				col = sc.nextInt();
+				break;
+			} catch (InputMismatchException e){
+				System.out.println("Invalid input. Expected an integer for the column number.");
+			}
+		}
+		return col - 1;
 	}
 	
-	public String promptName(Scanner sc) throws Exception {
-		System.out.print("Enter a name for the reservation: ");
-		return sc.nextLine().trim();
+	public String promptName(Scanner sc){
+		Pattern p = Pattern.compile("[A-Za-z]+(\s[A-Za-z]*)*");
+
+		String name = null;
+		while (true) {
+			System.out.print("Enter a name for the reservation: ");
+			name = sc.nextLine().trim();
+			
+			if (!p.matcher(name).matches()) {
+				System.out.println("\nInvalid input. Name must be greater than length 0 and consist\n"
+						+ "of alphabetic characters.");
+				continue;
+			}
+			
+			break;
+		}
+		
+		return name;
 	}
 
 	@Override
@@ -78,7 +113,7 @@ public class Auditorium implements Reservable{
 		}
 		
 		if (!seatIsAvailable(row, column)) {
-			System.out.println("The seat at row: " + row + " column: " + 
+			System.out.println("\nThe seat at row: " + row + " column: " + 
 					column + " is not available.");
 			return;
 		}
@@ -91,7 +126,7 @@ public class Auditorium implements Reservable{
 		}
 		
 		seats[row][column] = "x";
-		System.out.println("The seat at row: " + row + " column: " + column + 
+		System.out.println("\nThe seat at row: " + (row + 1) + ", column: " + (column + 1) + 
 				" has been reserved for "+ viewerName +".");
 	}
 	
@@ -106,7 +141,7 @@ public class Auditorium implements Reservable{
 	@Override
 	public boolean isValidSeat(int row, int column) {
 		if (row < 0 || row >= seats.length || column < 0 || column >= seats[row].length) {
-			System.out.println("Invalid row column pairing. Row: " + row + " Column: " + column);
+			System.out.println("Invalid row column pairing. Row: " + row + ", Column: " + column);
 			return false;
 		}
 
