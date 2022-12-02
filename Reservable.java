@@ -6,7 +6,7 @@ public interface Reservable {
 	
 	public void deleteReservation(int row, int column);
 	
-	public void isValidSeat(int row, int column) throws Exception;
+	public boolean isValidSeat(int row, int column);
 	
 	public boolean seatIsAvailable(int row, int column);
 	
